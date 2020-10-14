@@ -1,6 +1,7 @@
 // Variables
 
 var baseUrl = "http://localhost:8080";
+var fallbackRoute = "dashboard.html";
 
 // Read URL parameters
 
@@ -19,9 +20,29 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 };
 
-// ----------------------------------------------------------------------- //
 /**
+ * -----------------------------------------------------------------------
+ * UI Functions
+ * -----------------------------------------------------------------------
+ */
+
+/**
+ * Display Errors in Page
+ * @param {Array} errorArray Errors
+ */
+function displayErrors(errorArray) {
+    let errors = '';
+    $.each(errorArray, function (key, error) {
+        errors = errors + '<li>' + error + '</li>';
+    });
+    let printStr = '<div class="alert alert-danger alert-dismissible mt-3 fade show errorMessage" role="alert"><strong>Error!</strong> Operation failed. Please check the errors and retry.<ul>' + errors + '</ul><button type="button" class="close"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+    $('#title').after(printStr);
+}
+
+/**
+ * -----------------------------------------------------------------------
  * Database Functions
+ * -----------------------------------------------------------------------
  */
 
 /**
@@ -147,3 +168,69 @@ function loadDoctorsToDropdown() {
 /**
  * Patient CURD & Helper Functions
  */
+
+
+/**
+ * Profile
+ */
+
+/**
+ * Load details of user
+ * @param {number} id User ID
+ */
+function editProfile(id) {
+    $.ajax({
+        type: "GET",
+        url: baseUrl + '/user?id=' + id,
+        dataType: "json",
+        success: function (data, status, xhr) {
+            let user = data.data;
+            $('#name').val(user.name);
+            $('#email').val(user.email);
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            alert('Something went wrong! ' + errorMessage);
+            window.location.replace(fallbackRoute);
+        }
+    });
+}
+
+/**
+ * Update profile
+ * @param {number} id User ID
+ * @param {form} form Form
+ */
+function updateProfile(id, form) {
+    $.ajax({
+        type: "POST",
+        url: baseUrl + '/user?id=' + id + '&' + form.serialize(),
+        success: function (data, status, xhr) {
+            toastr.success('Profile updated successfully', 'Save Complete');
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            toastr.error('Something went wrong! ' + errorMessage, 'Error')
+        }
+    });
+}
+
+/**
+ * Update password
+ * @param {number} id User ID
+ * @param {form} form Form
+ */
+function updatePassword(id, form) {
+    $.ajax({
+        type: "PUT",
+        url: baseUrl + '/user?id=' + id + '&' + form.serialize(),
+        success: function (data, status, xhr) {
+            toastr.success('Password updated successfully', 'Save Complete');
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            if (jqXhr.responseJSON != null){
+                displayErrors(jqXhr.responseJSON.errors);
+            }else{
+                toastr.error('Something went wrong! ' + errorMessage, 'Error');
+            }
+        }
+    });
+}
