@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>National Covid Management System</title>
+    <title>Users - National Covid Management System</title>
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
     <link href="vendor/toastr/toastr.min.css" rel="stylesheet" type="text/css">
@@ -24,29 +24,39 @@
                 <li class="breadcrumb-item">
                     <a href="dashboard.html">Dashboard</a>
                 </li>
-                <li class="breadcrumb-item active">Blank Page</li>
+                <li class="breadcrumb-item active">Users</li>
             </ol>
-            <div class="row">
-                <div id="title" class="col-12">
-                    <h1>Blank</h1>
-                    <p>This is an example of a blank page that you can use as a starting point for creating new ones.
-                    </p>
+            <div id="title" class="row">
+                <div class="col-12">
+                    <h1>User Management</h1>
+                </div>
+            </div>
+
+            <div class="card mb-3 mt-3">
+                <div class="card-header">
+                    <i class="fa fa-table"></i> Users List
+                    <a href="add-user.html" class="btn btn-outline-success btn-sm pull-right">Create User</a>
+                </div>
+                    
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="users-list" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Hospital</th>
+                                    <th>Role</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         <footer class="sticky-footer">
             <div class="container">
@@ -67,6 +77,12 @@
         <script src="js/sb-admin.js"></script>
         <script src="inc/js/ui.js"></script>
         <script src="inc/js/functions.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () { 
+                loadUsersList();
+            });
+        </script>
     </div>
 </body>
 

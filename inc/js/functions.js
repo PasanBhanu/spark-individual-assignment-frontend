@@ -28,15 +28,25 @@ var getUrlParameter = function getUrlParameter(sParam) {
 
 /**
  * Display Errors in Page
- * @param {Array} errorArray Errors
+ * @param {Array} jqXhr Ajax Response
+ * @param {boolean} redirect Redirect After Error
  */
-function displayErrors(errorArray) {
-    let errors = '';
-    $.each(errorArray, function (key, error) {
-        errors = errors + '<li>' + error + '</li>';
-    });
-    let printStr = '<div class="alert alert-danger alert-dismissible mt-3 fade show errorMessage" role="alert"><strong>Error!</strong> Operation failed. Please check the errors and retry.<ul>' + errors + '</ul><button type="button" class="close"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
-    $('#title').after(printStr);
+
+function ajaxErrorHandle(jqXhr, redirect = false) {
+    if (jqXhr.responseJSON != null) {
+        let errors = '';
+        $.each(jqXhr.responseJSON.errors, function (key, error) {
+            errors = errors + '<li>' + error + '</li>';
+        });
+        let printStr = '<div class="alert alert-danger alert-dismissible mt-3 fade show errorMessage" role="alert"><strong>Error!</strong> Operation failed. Please check the errors and retry.<ul>' + errors + '</ul><button type="button" class="close"data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>';
+        $('#title').after(printStr);
+    } else {
+        toastr.error('Something went wrong!', 'Error');
+    }
+
+    if (redirect){
+        window.location.replace(fallbackRoute);
+    }
 }
 
 /**
@@ -46,7 +56,9 @@ function displayErrors(errorArray) {
  */
 
 /**
+ * -----------------------------------------------------------------------
  * Hospital CURD Functions & Helper Functions
+ * -----------------------------------------------------------------------
  */
 
 /**
@@ -164,14 +176,100 @@ function loadDoctorsToDropdown() {
     });
 }
 
-
 /**
+ * -----------------------------------------------------------------------
  * Patient CURD & Helper Functions
+ * -----------------------------------------------------------------------
  */
 
+/**
+ * -----------------------------------------------------------------------
+ * User Management CURD & Helper Functions
+ * -----------------------------------------------------------------------
+ */
 
 /**
+ * Load Users List
+ */
+function loadUsersList() {
+    $.ajax({
+        type: "GET",
+        url: baseUrl + '/lists/users',
+        dataType: "json",
+        success: function (data, status, xhr) {
+            let users = data.data;
+            $.each(users, function (key, user) {
+                let printStr = '<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + user.hospital + '</td><td>' + ((user.role == 1) ? 'MOH' : 'Doctor') + '</td><td><a href="edit-user.html?id=' + user.id + '" class="btn btn-outline-primary btn-sm">Edit</a></td></tr>';
+                $('#users-list tr:last').after(printStr);
+            });
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            toastr.error('Something went wrong! ' + errorMessage, 'Error');
+        }
+    });
+}
+
+/**
+ * Load details of User
+ * @param {number} id Hospital ID
+ */
+function editUser(id) {
+    $.ajax({
+        type: "GET",
+        url: baseUrl + '/user?id=' + id,
+        dataType: "json",
+        success: function (data, status, xhr) {
+            let user = data.data;
+            $('#name').val(user.name);
+            $('#email').val(user.email);
+            $('#role').val(user.role).change();
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr, true);
+        }
+    });
+}
+
+/**
+ * Update user details
+ * @param {number} id User ID
+ * @param {form} form Form
+ */
+function updateUser(id, form) {
+    $.ajax({
+        type: "POST",
+        url: baseUrl + '/user?id=' + id + '&' + form.serialize(),
+        success: function (data, status, xhr) {
+            toastr.success('User updated successfully', 'Save Complete');
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr);
+        }
+    });
+}
+
+/**
+ * Update user password
+ * @param {number} id User ID
+ * @param {form} form Form
+ */
+function updateUserPassword(id, form) {
+    $.ajax({
+        type: "PUT",
+        url: baseUrl + '/user?id=' + id + '&' + form.serialize(),
+        success: function (data, status, xhr) {
+            toastr.success('User password updated successfully', 'Save Complete');
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr);
+        }
+    });
+}
+
+/**
+ * -----------------------------------------------------------------------
  * Profile
+ * -----------------------------------------------------------------------
  */
 
 /**
@@ -181,7 +279,7 @@ function loadDoctorsToDropdown() {
 function editProfile(id) {
     $.ajax({
         type: "GET",
-        url: baseUrl + '/user?id=' + id,
+        url: baseUrl + '/uer?id=' + id,
         dataType: "json",
         success: function (data, status, xhr) {
             let user = data.data;
@@ -189,8 +287,7 @@ function editProfile(id) {
             $('#email').val(user.email);
         },
         error: function (jqXhr, textStatus, errorMessage) {
-            alert('Something went wrong! ' + errorMessage);
-            window.location.replace(fallbackRoute);
+            ajaxErrorHandle(jqXhr, true);
         }
     });
 }
@@ -208,7 +305,7 @@ function updateProfile(id, form) {
             toastr.success('Profile updated successfully', 'Save Complete');
         },
         error: function (jqXhr, textStatus, errorMessage) {
-            toastr.error('Something went wrong! ' + errorMessage, 'Error')
+            ajaxErrorHandle(jqXhr);
         }
     });
 }
@@ -226,11 +323,7 @@ function updatePassword(id, form) {
             toastr.success('Password updated successfully', 'Save Complete');
         },
         error: function (jqXhr, textStatus, errorMessage) {
-            if (jqXhr.responseJSON != null){
-                displayErrors(jqXhr.responseJSON.errors);
-            }else{
-                toastr.error('Something went wrong! ' + errorMessage, 'Error');
-            }
+            ajaxErrorHandle(jqXhr);
         }
     });
 }
