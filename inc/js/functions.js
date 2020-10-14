@@ -19,9 +19,18 @@ var getUrlParameter = function getUrlParameter(sParam) {
     }
 };
 
-// Database functions
+// ----------------------------------------------------------------------- //
+/**
+ * Database Functions
+ */
 
-// Hospitals - Load
+/**
+ * Hospital CURD Functions & Helper Functions
+ */
+
+/**
+ * Load Hospital List
+ */
 function loadHospitalList() {
     $.ajax({
         type: "GET",
@@ -40,6 +49,10 @@ function loadHospitalList() {
     });
 }
 
+/**
+ * Load details of Hospital
+ * @param {number} id Hospital ID
+ */
 function editHospital(id){
     $.ajax({
         type: "GET",
@@ -59,6 +72,10 @@ function editHospital(id){
     });
 }
 
+/**
+ * Add new hospital
+ * @param {form} form Form
+ */
 function addHospital(form) {
     $.ajax({
         type: "POST",
@@ -72,6 +89,11 @@ function addHospital(form) {
     });
 }
 
+/**
+ * Update hospital
+ * @param {number} id Hospital ID
+ * @param {form} form Form
+ */
 function updateHospital(id, form){
     $.ajax({
         type: "PUT",
@@ -85,7 +107,11 @@ function updateHospital(id, form){
     });
 }
 
-function deleteHospital(id, form) {
+/**
+ * 
+ * @param {number} id Hospital ID
+ */
+function deleteHospital(id) {
     $.ajax({
         type: "DELETE",
         url: baseUrl + '/hospital?id=' + id,
@@ -98,6 +124,9 @@ function deleteHospital(id, form) {
     });
 }
 
+/**
+ * Load doctors to dropdown list
+ */
 function loadDoctorsToDropdown() {
     $.ajax({
         type: "GET",
@@ -113,3 +142,8 @@ function loadDoctorsToDropdown() {
         }
     });
 }
+
+
+/**
+ * Patient CURD & Helper Functions
+ */
