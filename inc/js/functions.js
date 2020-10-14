@@ -199,7 +199,7 @@ function loadUsersList() {
         success: function (data, status, xhr) {
             let users = data.data;
             $.each(users, function (key, user) {
-                let printStr = '<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + user.hospital + '</td><td>' + ((user.role == 1) ? 'MOH' : 'Doctor') + '</td><td><a href="edit-user.html?id=' + user.id + '" class="btn btn-outline-primary btn-sm">Edit</a></td></tr>';
+                let printStr = '<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + ((user.hospital == null) ? '-' : user.hospital) + '</td><td>' + ((user.role == 1) ? 'MOH' : 'Doctor') + '</td><td><a href="edit-user.html?id=' + user.id + '" class="btn btn-outline-primary btn-sm">Edit</a></td></tr>';
                 $('#users-list tr:last').after(printStr);
             });
         },
@@ -279,7 +279,7 @@ function updateUserPassword(id, form) {
 function editProfile(id) {
     $.ajax({
         type: "GET",
-        url: baseUrl + '/uer?id=' + id,
+        url: baseUrl + '/user?id=' + id,
         dataType: "json",
         success: function (data, status, xhr) {
             let user = data.data;

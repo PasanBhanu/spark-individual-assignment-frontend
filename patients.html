@@ -24,25 +24,57 @@
                 </li>
                 <li class="breadcrumb-item active">Patients</li>
             </ol>
-            <div class="row">
+            <div id="title" class="row">
                 <div class="col-12">
                     <h1>Patient List</h1>
                 </div>
             </div>
+
+            <div class="card mb-3 mt-3">
+                <div class="card-header">
+                    <i class="fa fa-table"></i> Patient List
+                </div>
+            
+                <div class="card-body">
+                    <form class="mb-3">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Select Hospital</label>
+                            <div class="col-sm-4">
+                                <select name="hospital" id="hospitals">
+                                </select>
+                            </div>
+                            <label class="col-sm-2 col-form-label">Select Status</label>
+                            <div class="col-sm-2">
+                                <select name="status">
+                                    <option value=0>In Queue</option>
+                                    <option value=1>Admitted</option>
+                                    <option value=2>Discharged</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn btn-primary pull-right">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="hospitals-list" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Director</th>
+                                    <th>Geolocation</th>
+                                    <th>District</th>
+                                    <th>Patients</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         <footer class="sticky-footer">
             <div class="container">
