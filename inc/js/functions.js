@@ -88,9 +88,6 @@ $(function () {
         'patients.html',
         'edit-patient.html',
         'dashboard-moh.html',
-
-        'dashboard-patient.html',
-        'dashboard-doctor.html',
     ];
 
     let doctorUrls = [
@@ -305,7 +302,7 @@ function loadHospitalList() {
             });
         },
         error: function (jqXhr, textStatus, errorMessage) {
-            alert('Something went wrong! ' + errorMessage);
+            ajaxErrorHandle(jqXhr);
         }
     });
 }
@@ -328,7 +325,7 @@ function editHospital(id){
             $('#doctor').val(hospital.user_id).change();
         },
         error: function (jqXhr, textStatus, errorMessage) {
-            alert('Something went wrong! ' + errorMessage);
+            ajaxErrorHandle(jqXhr);
         }
     });
 }
@@ -399,7 +396,7 @@ function loadDoctorsToDropdown() {
             });
         },
         error: function (jqXhr, textStatus, errorMessage) {
-            alert('Something went wrong! ' + errorMessage);
+            ajaxErrorHandle(jqXhr);
         }
     });
 }
