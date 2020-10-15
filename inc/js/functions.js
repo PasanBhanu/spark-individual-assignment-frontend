@@ -286,6 +286,24 @@ function loadUsersList() {
 }
 
 /**
+ * Add new user
+ * @param {form} form Form
+ */
+function addUser(form) {
+    $.ajax({
+        type: "POST",
+        url: apiUrl + '/register?' + form.serialize(),
+        success: function (data, status, xhr) {
+            form.trigger("reset");
+            toastr.success('User added successfully', 'Save Complete');
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr);
+        }
+    });
+}
+
+/**
  * Load details of User
  * @param {number} id Hospital ID
  */
@@ -338,6 +356,25 @@ function updateUserPassword(id, form) {
         },
         error: function (jqXhr, textStatus, errorMessage) {
             ajaxErrorHandle(jqXhr);
+        }
+    });
+}
+
+/**
+ * Load hospitals to dropdown list
+ */
+function loadHospitalsToDropdown() {
+    $.ajax({
+        type: "GET",
+        url: apiUrl + '/lists/hospitals',
+        dataType: "json",
+        success: function (data, status, xhr) {
+            $.each(data.data, function (key, hospital) {
+                $('#hospital').append('<option value=' + hospital.id + '>' + hospital.name + '</option>');
+            });
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr, true);
         }
     });
 }
