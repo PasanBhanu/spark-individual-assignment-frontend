@@ -87,16 +87,21 @@ $(function () {
         'profile.html',
         'patients.html',
         'edit-patient.html',
+        'dashboard-moh.html',
+
+        'dashboard-patient.html',
+        'dashboard-doctor.html',
     ];
 
     let doctorUrls = [
         'profile.html',
         'patients.html',
         'edit-patient.html',
+        'dashboard-doctor.html',
     ];
 
     let patientUrls = [
-        
+        'dashboard-patient.html',
     ];
 
     // Patient
@@ -126,6 +131,157 @@ $(function () {
  * Database Functions
  * -----------------------------------------------------------------------
  */
+
+
+/**
+ * Load details of Patient
+ * @param {number} id Patient ID
+ */
+function dashboardPatient() {
+    let id = Cookies.get('userId');
+    $.ajax({
+        type: "GET",
+        url: apiUrl + '/patient?id=' + id,
+        dataType: "json",
+        success: function (data, status, xhr) {
+            let patient = data.data;
+            $('#name').val(patient.name);
+            $('#email').val(patient.email);
+            $('#contact_number').val(patient.contact_number);
+            $('#district').val(patient.district);
+            $('#geolocation').val(patient.geolocation_x + ',' + patient.geolocation_y);
+            $('#serial_no').val((patient.serial_no != null) ? patient.serial_no : 'NA');
+            $('#hospital_name').val((patient.hospital_name != null) ? patient.hospital_name : 'NA');
+            $('#bed_no').val((patient.bed_no != null) ? patient.bed_no : 'NA');
+            $('#register_date').val((patient.register_date != null) ? patient.register_date : 'NA');
+            $('#admission_date').val((patient.admission_date != null) ? patient.admission_date : 'NA');
+            $('#discharged_date').val((patient.discharged_date != null) ? patient.discharged_date : 'NA');
+            let decease_level = 'NA';
+            switch (patient.decease_level) {
+                case 0:
+                    decease_level = 'Not Assessed';
+                    break;
+
+                case 1:
+                    decease_level = 'Low';
+                    break;
+
+                case 2:
+                    decease_level = 'Moderate';
+                    break;
+
+                case 3:
+                    decease_level = 'Critical';
+                    break;
+            }
+            $('#decease_level').val(decease_level);
+            switch (patient.status) {
+                case 0:
+                    $('#status').val('In Queue');
+                    break;
+                case 1:
+                    $('#status').val('Admitted');
+                    $('#admission-container').show();
+                    $('#hospital-container').show();
+                    break;
+                case 2:
+                    $('#status').val('Discharged');
+                    $('#admission-container').show();
+                    $('#discharged-container').show();
+                    break;
+                default:
+                    break;
+            }
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr);
+        }
+    });
+}
+
+/**
+ * Load data for stat display
+ */
+function loadStats(){
+    $.ajax({
+        type: "GET",
+        url: apiUrl + '/stats',
+        dataType: "json",
+        success: function (data, status, xhr) {
+            let chart1 = document.getElementById("districtChart");
+            let districtChart = new Chart(chart1, {
+                type: 'pie',
+                data: {
+                    labels: data.data.district.label,
+                    datasets: [{
+                        data: data.data.district.data,
+                        backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745', '#fd00ef'],
+                    }],
+                },
+            });
+
+            let chart2 = document.getElementById("dailyChart");
+            let dailyChart = new Chart(chart2, {
+                type: 'bar',
+                data: {
+                    labels: data.data.days.label,
+                    datasets: [{
+                        label: "Revenue",
+                        backgroundColor: "rgba(2,117,216,1)",
+                        borderColor: "rgba(2,117,216,1)",
+                        data: data.data.days.data,
+                    }],
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            time: {
+                                unit: 'month'
+                            },
+                            gridLines: {
+                                display: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 6
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                min: 0,
+                                maxTicksLimit: 5
+                            },
+                            gridLines: {
+                                display: true
+                            }
+                        }],
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            });
+
+            let chart3 = document.getElementById("totalStatus");
+            let totalStatus = new Chart(chart3, {
+                type: 'pie',
+                data: {
+                    labels: data.data.total_status.label,
+                    datasets: [{
+                        data: data.data.total_status.data,
+                        backgroundColor: ['#007bff', '#dc3545', '#ffc107', '#28a745'],
+                    }],
+                },
+            });
+
+            $('#queue_count').html(data.data.daily_status[0] + ' In Queue');
+            $('#admission_count').html(data.data.daily_status[1] + ' Daily Admissions');
+            $('#discharged_count').html(data.data.daily_status[2] + ' Discharged');
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr);
+        }
+    });
+}
 
 /**
  * -----------------------------------------------------------------------
