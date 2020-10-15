@@ -252,7 +252,46 @@ function loadDoctorsToDropdown() {
  * -----------------------------------------------------------------------
  */
 
+/**
+ * Load Patient List
+ */
+function loadPatientList(hospital, status) {
+    $.ajax({
+        type: "GET",
+        url: apiUrl + '/lists/patients?hospital=' + hospital + '&status=' + status,
+        dataType: "json",
+        success: function (data, status, xhr) {
+            let patients = data.data;
+            $("#patients-list > tbody").html("");
+            $.each(patients, function (key, patient) {
+                let printStr = '<tr><td>' + patient.name + '</td><td>' + patient.contact_number + '</td><td>' + patient.geolocation_x + ',' + patient.geolocation_y + '</td><td>' + patient.district + '</td><td>' + ((patient.decease_level == null) ? 'N/A' : patient.decease_level) + '</td><td>' + ((patient.hospital == null) ? 'In Queue' : patient.hospital) + '</td><td><a href="edit-patient.html?id=' + patient.id + '" class="btn btn-outline-primary btn-sm">Edit</a></td></tr>';
+                $('#patients-list > tbody').append(printStr);
+            });
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr);
+        }
+    });
+}
 
+/**
+ * Load hospital of the doctor
+ * @param {number} id User ID
+ */
+function loadHospitalOfDoctorToDropdown(id) {
+    $.ajax({
+        type: "GET",
+        url: apiUrl + '/user?id=' + id,
+        dataType: "json",
+        success: function (data, status, xhr) {
+            let user = data.data;
+            $('#hospital').append('<option value=' + hospital.id + '>My Hospital</option>');
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr, true);
+        }
+    });
+}
 
 /**
  * -----------------------------------------------------------------------
@@ -282,7 +321,7 @@ function loadUsersList() {
             });
         },
         error: function (jqXhr, textStatus, errorMessage) {
-            toastr.error('Something went wrong! ' + errorMessage, 'Error');
+            ajaxErrorHandle(jqXhr);
         }
     });
 }
