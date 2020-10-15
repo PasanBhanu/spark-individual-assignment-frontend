@@ -252,6 +252,8 @@ function loadDoctorsToDropdown() {
  * -----------------------------------------------------------------------
  */
 
+
+
 /**
  * -----------------------------------------------------------------------
  * User Management CURD & Helper Functions
@@ -317,6 +319,7 @@ function editUser(id) {
             $('#name').val(user.name);
             $('#email').val(user.email);
             $('#role').val(user.role).change();
+            $('#hospital').val(user.hospitalId).change();
         },
         error: function (jqXhr, textStatus, errorMessage) {
             ajaxErrorHandle(jqXhr, true);
@@ -361,6 +364,25 @@ function updateUserPassword(id, form) {
 }
 
 /**
+ * Delete user
+ * @param {number} id User ID
+ */
+function deleteUser(id) {
+    $.ajax({
+        type: "DELETE",
+        url: apiUrl + '/user?id=' + id,
+        success: function (data, status, xhr) {
+            toastr.success('User deleted successfully', 'Delete Complete');
+            window.location.replace("users.html");
+        },
+        error: function (jqXhr, textStatus, errorMessage) {
+            ajaxErrorHandle(jqXhr);
+        }
+    });
+}
+
+
+/**
  * Load hospitals to dropdown list
  */
 function loadHospitalsToDropdown() {
@@ -374,7 +396,7 @@ function loadHospitalsToDropdown() {
             });
         },
         error: function (jqXhr, textStatus, errorMessage) {
-            ajaxErrorHandle(jqXhr, true);
+            ajaxErrorHandle(jqXhr);
         }
     });
 }
@@ -392,7 +414,7 @@ function editProfile() {
     let id = Cookies.get('userId');
     $.ajax({
         type: "GET",
-        url: apiUrl + '/user?id=' + id,
+        url: apiUrl + '/profile?id=' + id,
         dataType: "json",
         success: function (data, status, xhr) {
             let user = data.data;
@@ -413,7 +435,7 @@ function updateProfile(form) {
     let id = Cookies.get('userId');
     $.ajax({
         type: "POST",
-        url: apiUrl + '/user?id=' + id + '&' + form.serialize(),
+        url: apiUrl + '/profile?id=' + id + '&' + form.serialize(),
         success: function (data, status, xhr) {
             toastr.success('Profile updated successfully', 'Save Complete');
         },
@@ -432,7 +454,7 @@ function updatePassword(form) {
     let id = Cookies.get('userId');
     $.ajax({
         type: "PUT",
-        url: apiUrl + '/user?id=' + id + '&' + form.serialize(),
+        url: apiUrl + '/profile?id=' + id + '&' + form.serialize(),
         success: function (data, status, xhr) {
             toastr.success('Password updated successfully', 'Save Complete');
         },
