@@ -1,6 +1,7 @@
 // Variables
 
-var baseUrl = "http://localhost:8080";
+var apiUrl = "http://localhost:8080";
+var baseUrl = "http://localhost/ncms"
 var fallbackRoute = "dashboard.html";
 
 // Read URL parameters
@@ -51,6 +52,75 @@ function ajaxErrorHandle(jqXhr, redirect = false) {
 
 /**
  * -----------------------------------------------------------------------
+ * Authentication & Role Check
+ * -----------------------------------------------------------------------
+ */
+
+/**
+ * Middleware for login check
+ */
+$(function () {
+    let id = Cookies.get('userId');
+    let role = Cookies.get('role');
+
+    if (!id || !role){
+        Cookies.remove('userId');
+        Cookies.remove('role');
+        window.location.replace('index.html');
+    }
+});
+
+/**
+ * Middleware for role based access
+ */
+$(function () {
+    let role = Cookies.get('role');
+    let path = window.location.pathname.substring(window.location.pathname.lastIndexOf('/') + 1);
+    
+    let mohUrls = [
+        'users.html',
+        'add-user.html',
+        'edit-user.html',
+        'hospitals.html',
+        'add-hospital.html',
+        'edit-hospital.html',
+        'profile.html',
+        'patients.html',
+    ];
+
+    let doctorUrls = [
+        'profile.html',
+        'patients.html',
+    ];
+
+    let patientUrls = [
+        
+    ];
+
+    // Patient
+    if (role == 0){
+        if (jQuery.inArray(path, patientUrls) === -1) {
+            window.location.replace('index.html');
+        }
+    }
+
+    // MoH
+    if (role == 1){
+        if (jQuery.inArray(path, mohUrls) === -1){
+            window.location.replace('index.html');
+        }
+    }
+
+    // Doctor
+    if (role == 2) {
+        if (jQuery.inArray(path, doctorUrls) === -1) {
+            window.location.replace('index.html');
+        }
+    }
+});
+
+/**
+ * -----------------------------------------------------------------------
  * Database Functions
  * -----------------------------------------------------------------------
  */
@@ -67,7 +137,7 @@ function ajaxErrorHandle(jqXhr, redirect = false) {
 function loadHospitalList() {
     $.ajax({
         type: "GET",
-        url: baseUrl + '/lists/hospitals',
+        url: apiUrl + '/lists/hospitals',
         dataType: "json",
         success: function (data, status, xhr) {
             let hospitals = data.data;
@@ -89,7 +159,7 @@ function loadHospitalList() {
 function editHospital(id){
     $.ajax({
         type: "GET",
-        url: baseUrl + '/hospital?id=' + id,
+        url: apiUrl + '/hospital?id=' + id,
         dataType: "json",
         success: function (data, status, xhr) {
             let hospital = data.data;
@@ -112,7 +182,7 @@ function editHospital(id){
 function addHospital(form) {
     $.ajax({
         type: "POST",
-        url: baseUrl + '/hospital?' + form.serialize(),
+        url: apiUrl + '/hospital?' + form.serialize(),
         success: function (data, status, xhr) {
             toastr.success('Hospital added successfully', 'Save Complete');
         },
@@ -130,7 +200,7 @@ function addHospital(form) {
 function updateHospital(id, form){
     $.ajax({
         type: "PUT",
-        url: baseUrl + '/hospital?id=' + id + '&' + form.serialize(),
+        url: apiUrl + '/hospital?id=' + id + '&' + form.serialize(),
         success: function (data, status, xhr) {
             toastr.success('Hospital updated successfully', 'Save Complete');
         },
@@ -147,7 +217,7 @@ function updateHospital(id, form){
 function deleteHospital(id) {
     $.ajax({
         type: "DELETE",
-        url: baseUrl + '/hospital?id=' + id,
+        url: apiUrl + '/hospital?id=' + id,
         success: function (data, status, xhr) {
             toastr.success('Hospital deleted successfully', 'Delete Complete');
         },
@@ -163,7 +233,7 @@ function deleteHospital(id) {
 function loadDoctorsToDropdown() {
     $.ajax({
         type: "GET",
-        url: baseUrl + '/lists/doctors',
+        url: apiUrl + '/lists/doctors',
         dataType: "json",
         success: function (data, status, xhr) {
             $.each(data.data, function (key, doctor) {
@@ -192,14 +262,20 @@ function loadDoctorsToDropdown() {
  * Load Users List
  */
 function loadUsersList() {
+    let id = Cookies.get('userId');
     $.ajax({
         type: "GET",
-        url: baseUrl + '/lists/users',
+        url: apiUrl + '/lists/users',
         dataType: "json",
         success: function (data, status, xhr) {
             let users = data.data;
             $.each(users, function (key, user) {
-                let printStr = '<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + ((user.hospital == null) ? '-' : user.hospital) + '</td><td>' + ((user.role == 1) ? 'MOH' : 'Doctor') + '</td><td><a href="edit-user.html?id=' + user.id + '" class="btn btn-outline-primary btn-sm">Edit</a></td></tr>';
+                let printStr = '';
+                if (id == user.id){
+                    printStr = '<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + ((user.hospital == null) ? '-' : user.hospital) + '</td><td>' + ((user.role == 1) ? 'MOH' : 'Doctor') + '</td><td><a href="profile.html" class="btn btn-outline-primary btn-sm">View Profile</a></td></tr>';
+                }else{
+                    printStr = '<tr><td>' + user.name + '</td><td>' + user.email + '</td><td>' + ((user.hospital == null) ? '-' : user.hospital) + '</td><td>' + ((user.role == 1) ? 'MOH' : 'Doctor') + '</td><td><a href="edit-user.html?id=' + user.id + '" class="btn btn-outline-primary btn-sm">Edit</a></td></tr>';
+                }
                 $('#users-list tr:last').after(printStr);
             });
         },
@@ -216,7 +292,7 @@ function loadUsersList() {
 function editUser(id) {
     $.ajax({
         type: "GET",
-        url: baseUrl + '/user?id=' + id,
+        url: apiUrl + '/user?id=' + id,
         dataType: "json",
         success: function (data, status, xhr) {
             let user = data.data;
@@ -238,7 +314,7 @@ function editUser(id) {
 function updateUser(id, form) {
     $.ajax({
         type: "POST",
-        url: baseUrl + '/user?id=' + id + '&' + form.serialize(),
+        url: apiUrl + '/user?id=' + id + '&' + form.serialize(),
         success: function (data, status, xhr) {
             toastr.success('User updated successfully', 'Save Complete');
         },
@@ -256,7 +332,7 @@ function updateUser(id, form) {
 function updateUserPassword(id, form) {
     $.ajax({
         type: "PUT",
-        url: baseUrl + '/user?id=' + id + '&' + form.serialize(),
+        url: apiUrl + '/user?id=' + id + '&' + form.serialize(),
         success: function (data, status, xhr) {
             toastr.success('User password updated successfully', 'Save Complete');
         },
@@ -274,12 +350,12 @@ function updateUserPassword(id, form) {
 
 /**
  * Load details of user
- * @param {number} id User ID
  */
-function editProfile(id) {
+function editProfile() {
+    let id = Cookies.get('userId');
     $.ajax({
         type: "GET",
-        url: baseUrl + '/user?id=' + id,
+        url: apiUrl + '/user?id=' + id,
         dataType: "json",
         success: function (data, status, xhr) {
             let user = data.data;
@@ -294,13 +370,13 @@ function editProfile(id) {
 
 /**
  * Update profile
- * @param {number} id User ID
  * @param {form} form Form
  */
-function updateProfile(id, form) {
+function updateProfile(form) {
+    let id = Cookies.get('userId');
     $.ajax({
         type: "POST",
-        url: baseUrl + '/user?id=' + id + '&' + form.serialize(),
+        url: apiUrl + '/user?id=' + id + '&' + form.serialize(),
         success: function (data, status, xhr) {
             toastr.success('Profile updated successfully', 'Save Complete');
         },
@@ -315,10 +391,11 @@ function updateProfile(id, form) {
  * @param {number} id User ID
  * @param {form} form Form
  */
-function updatePassword(id, form) {
+function updatePassword(form) {
+    let id = Cookies.get('userId');
     $.ajax({
         type: "PUT",
-        url: baseUrl + '/user?id=' + id + '&' + form.serialize(),
+        url: apiUrl + '/user?id=' + id + '&' + form.serialize(),
         success: function (data, status, xhr) {
             toastr.success('Password updated successfully', 'Save Complete');
         },
