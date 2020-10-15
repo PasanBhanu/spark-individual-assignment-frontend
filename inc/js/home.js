@@ -74,9 +74,9 @@ function loadStats() {
                 },
             });
 
-            $('#queue_count').html(data.data.daily_status[0] + ' In Queue');
-            $('#admission_count').html(data.data.daily_status[1] + ' Daily Admissions');
-            $('#discharged_count').html(data.data.daily_status[2] + ' Discharged');
+            $('#queue_count').html((data.data.daily_status[0] != null ? data.data.daily_status[0] : 0) + ' In Queue');
+            $('#admission_count').html((data.data.daily_status[1] != null ? data.data.daily_status[1] : 0) + ' Daily Admissions');
+            $('#discharged_count').html((data.data.daily_status[2] != null ? data.data.daily_status[2] : 0) + ' Discharged');
         },
         error: function (jqXhr, textStatus, errorMessage) {
             
