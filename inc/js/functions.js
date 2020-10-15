@@ -143,7 +143,7 @@ function dashboardPatient() {
     let id = Cookies.get('userId');
     $.ajax({
         type: "GET",
-        url: apiUrl + '/patient?id=' + id,
+        url: apiUrl + '/patient?id=' + id + '&ref=1',
         dataType: "json",
         success: function (data, status, xhr) {
             let patient = data.data;
@@ -324,7 +324,7 @@ function editHospital(id){
         success: function (data, status, xhr) {
             let hospital = data.data;
             $('#name').val(hospital.name);
-            $('#district').val(hospital.district);
+            $('#district').val(hospital.district).change();
             $('#geolocation_x').val(hospital.geolocation_x);
             $('#geolocation_y').val(hospital.geolocation_y);
             $('#doctor').val(hospital.user_id).change();
@@ -460,7 +460,7 @@ function loadPatientList(hospital, status) {
 function editPatient(id) {
     $.ajax({
         type: "GET",
-        url: apiUrl + '/patient?id=' + id,
+        url: apiUrl + '/patient?id=' + id + '&ref=0',
         dataType: "json",
         success: function (data, status, xhr) {
             let patient = data.data;
