@@ -1,12 +1,23 @@
 // Load UI components
 
+/**
+ * Menu arrangement
+ */
 $(function () {
-    var includes = $('[data-include]');
-    jQuery.each(includes, function () {
-        var file = 'inc/html/' + $(this).data('include') + '.html';
-        $(this).load(file);
-    });
+    let role = Cookies.get('role');
+
+    if (role == 0){
+        var file = 'inc/html/user.html';
+        $('[data-include]').load(file);
+    }else if (role == 1) {
+        var file = 'inc/html/moh.html';
+        $('[data-include]').load(file);
+    }else if (role == 2) {
+        var file = 'inc/html/doctor.html';
+        $('[data-include]').load(file);
+    }
 });
+
 
 toastr.options = {
     "closeButton": true,

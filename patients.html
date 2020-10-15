@@ -110,7 +110,7 @@
                     $('#status').val(1).change();
                     $('#status').find('[value=0]').remove();
                     $('#hospital').find('[value=0]').remove();
-                    $.when(loadHospitalOfDoctorToDropdown()).then(loadPatientList($('#hospital').val(),1));
+                    loadHospitalOfDoctorToDropdown();
                 }
 
                 $('#search').click(function (e) {
