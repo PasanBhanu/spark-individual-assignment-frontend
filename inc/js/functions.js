@@ -99,6 +99,7 @@ $(function () {
 
     let patientUrls = [
         'dashboard-patient.html',
+        'profile.html',
     ];
 
     // Patient
