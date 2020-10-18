@@ -1,4 +1,4 @@
-var baseUrl = "http://localhost:8080";
+var apiUrl = "http://localhost:8080";
 var fallbackRoute = "index.html";
 
 /**
@@ -37,7 +37,7 @@ function ajaxErrorHandle(jqXhr, redirect = false) {
 function loginToNcms(form) {
     $.ajax({
         type: "POST",
-        url: baseUrl + '/login?' + form.serialize(),
+        url: apiUrl + '/login?' + form.serialize(),
         success: function (data, status, xhr) {
             let userId = data.data.id;
             let role = data.data.role;
@@ -87,7 +87,7 @@ function logout() {
 function registerToNcms(form) {
     $.ajax({
         type: "POST",
-        url: baseUrl + '/register?' + form.serialize(),
+        url: apiUrl + '/register?' + form.serialize(),
         success: function (data, status, xhr) {
             let userId = data.data.userId;
             let role = data.data.role;
