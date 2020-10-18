@@ -21,6 +21,7 @@ var apiUrl = "http://localhost:8080";
 var baseUrl = "http://localhost/ncms"
 ```
 **apiUrl** - Backend url (base url) without trailing slash
+
 **baseUrl** - Frontend url (index.html url) without trailing slash
 
 # Dependancies
