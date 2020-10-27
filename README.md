@@ -24,6 +24,10 @@ var baseUrl = "http://localhost/ncms"
 
 **baseUrl** - Frontend url (index.html url) without trailing slash
 
+## Live Example
+
+Please check the live example deployed in AWS EC2 here : http://ec2-34-216-93-5.us-west-2.compute.amazonaws.com/
+
 ## Login Details
 
 ### MOH User
