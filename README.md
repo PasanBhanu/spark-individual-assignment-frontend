@@ -24,6 +24,20 @@ var baseUrl = "http://localhost/ncms"
 
 **baseUrl** - Frontend url (index.html url) without trailing slash
 
+## Login Details
+
+### MOH User
+- Username: moh@spark.lk
+- Password: password
+
+### Doctor
+- Username: doctor@spark.lk
+- Password: password
+
+### Patient
+- Username: patient@spark.lk
+- Password: password
+
 # Dependancies
 - Bootstrap: 4.0.0
 - Fontawesome: 4.7.0
